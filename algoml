@@ -1,25 +1,33 @@
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
-from torchvision import datasets
+from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor
+import torchvision.transforms as T
 
 batch = 64
 epochs = 3
 
 def downloadDataset():
+    transform_actions = transforms.Compose([ 
+            transforms.Resize((512,512)),
+            transforms.ToTensor()
+            #transforms.Normalize((0.5,)(0.5))
+        ]
+    )
+
     food_training_data=datasets.Food101(
         root="data",
         split = "train",
         download=True,
-        transform=ToTensor()
+        transform=transform_actions
     )
 
     food_test_data = datasets.Food101(
         root="data",
         split = "test",
         download=True,
-        transform=ToTensor()
+        transform=transform_actions
     )
 
     return food_training_data, food_test_data
@@ -28,6 +36,18 @@ food_trainset,food_testset = downloadDataset()
 print("Training set size: ", len(food_trainset))
 print("Testing set size : ", len(food_testset))
 
+
 # we define a loader and an iterator to process the training set
 trainloader = torch.utils.data.DataLoader(food_trainset, batch_size=64, shuffle=True)
 testloader = torch.utils.data.DataLoader(food_testset, batch_size=64, shuffle=False)
+
+"""for x,y in food_trainset:
+    print(x.shape)"""
+
+food_trainset_iter = iter(trainloader)
+"""print(food_trainset_iter)
+elem = next(food_trainset_iter)
+batch, target = elem
+print(batch.shape)
+print(target.shape)
+print(batch)"""
